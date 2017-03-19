@@ -5,17 +5,19 @@
 
 
 /* some defines used for ESP setup */
-#define SSID                      "your_ssid";
-#define SSID_PWD                  "your_password";
+#define SSID                      "ssid"
+#define SSID_PWD                  "your password"
 #define ESP_READ_BACK_DATA_LN     (20)
-#define CWMODE                    (1)
 #define CIPMUX                    (1)
-#define BAUD_RATE                 (57600)
+#define ESP_BAUD_RATE             (57600)               /* there is a baud rate mismatch, I actually talk with baud rate 115200 with ESP8200 */
+#define PC_BAUD_RATE              (9600)                /* there is a baud rate mismatch, I actually talk with baud rate 19200 with PC */
 #define AT_CMD                    "AT\r\n"              /* say hello to ESP, testing the connection */
 #define AT_CMD_RST                "AT+RST\r\n"          /* reset ESP module */
-#define AT_CMD_CIPMUX             "AT+CIPMUX=1"         /* accept multiple connections */
-#define AT_CMD_CIPMODE            "AT+CIPMODE=1\r\n"    /* use non-data mode */
+#define AT_CMD_CWMODE             "AT+CWMODE=1\r\n"     /* use as WIFI station */
+#define AT_CMD_CIPMUX             "AT+CIPMUX=1\r\n"     /* accept multiple connections */
+#define AT_CMD_CIPMODE            "AT+CIPMODE=0\r\n"    /* use non-data mode */
 #define AT_OK                     "OK"
+#define AT_CMD_CWJAP              "AT+CWJAP=\""
 
 /* forward declarations of functions */
 boolean setup_esp(void);
@@ -33,11 +35,11 @@ void setup(){
    */
   pinMode(ESP_TX_PIN, OUTPUT);
   pinMode(ESP_RX_PIN, INPUT);
-  esp8266.begin(BAUD_RATE);
+  esp8266.begin(ESP_BAUD_RATE);
   esp8266.listen();
 
   /* setup the hardware UART port for debugging */
-  Serial.begin(9600); //for status and debug
+  Serial.begin(PC_BAUD_RATE);
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
   }
@@ -52,5 +54,8 @@ void setup(){
 }
 
 void loop() {
+  /* now setup the ESP module */
+  //setup_esp();
+
   /* Do Nothing for now */
 }

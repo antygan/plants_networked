@@ -12,7 +12,7 @@
  */
 boolean read_back_from_esp(const char keyword1[], int key_size, int timeout_val, boolean mode) {
   unsigned long start_time=millis();
-  char esp_data[ESP_READ_BACK_DATA_LN];
+  char esp_data[ESP_READ_BACK_DATA_LN] = {0};
   int scratch_length=1;
  
   /* we only need a buffer as long as the keyword */
@@ -21,11 +21,13 @@ boolean read_back_from_esp(const char keyword1[], int key_size, int timeout_val,
     while(!esp8266.available()){
       if((millis()-start_time) > timeout_val) {
         Serial.println("timeout0");
+        Serial.write(esp_data);
         return false;
       }
     }
    
     esp_data[i]=esp8266.read();
+    
 
     /* save data if mode is true */
     if(mode) {
@@ -51,10 +53,11 @@ boolean read_back_from_esp(const char keyword1[], int key_size, int timeout_val,
     for(byte i=0; i<(key_size-1); i++){
       esp_data[i]= esp_data[i+1];
     }
-         
+    
     /* check if we have timed out */
     while(!esp8266.available()){
       if((millis() - start_time) > timeout_val) {
+        Serial.write(esp_data);
         Serial.println("timeout1");
         return false;
       }
@@ -76,11 +79,9 @@ boolean read_back_from_esp(const char keyword1[], int key_size, int timeout_val,
  *  
  *  @return void
  */
-
 void dump_data_from_esp(void) {
   char temp;
   while(esp8266.available()) {
     temp = esp8266.read();
-    delay(1);
   }
 }
